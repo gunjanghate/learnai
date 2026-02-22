@@ -1,11 +1,13 @@
-'use client';
+"use client";
 
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'motion/react';
 import { courses } from '@/lib/mockData';
 import { DashboardNavbar } from '@/components/DashboardNavbar';
 import { CourseCardSkeleton } from '@/components/CourseCardSkeleton';
+import { useUser } from '@/components/user-provider';
 
 const getLevelBadgeColor = (level: string) => {
   switch (level) {
@@ -28,6 +30,8 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All courses');
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const { user, isHydrated, enrolledCourseIds } = useUser();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,14 +40,37 @@ export default function DashboardPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!isHydrated) return;
+    if (!user) {
+      router.replace('/');
+    }
+  }, [user, isHydrated, router]);
+
   const filteredCourses = useMemo(() => {
-    return courses.filter((course) =>
+    const myCourses = courses.filter((course) => enrolledCourseIds.includes(course.id));
+
+    return myCourses.filter((course) =>
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
+  }, [searchQuery, enrolledCourseIds]);
+
+  const hasAnyEnrolled = enrolledCourseIds.length > 0;
 
   const categories = ['All courses', 'DeFi', 'Security', 'Solidity', 'Basics', 'Zero-Knowledge'];
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Loading your dashboard...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,11 +101,10 @@ export default function DashboardPage() {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${
-                selectedCategory === category
+              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${selectedCategory === category
                   ? 'bg-primary/20 text-primary border border-primary/30'
                   : 'bg-muted text-muted-foreground border border-border hover:bg-muted/80'
-              }`}
+                }`}
             >
               {category}
             </button>
@@ -98,63 +124,81 @@ export default function DashboardPage() {
                 <CourseCardSkeleton />
               </motion.div>
             ))
-          ) : filteredCourses.length > 0 ? (
-            filteredCourses.map((course, index) => (
+          ) : !hasAnyEnrolled ? (
             <motion.div
-              key={course.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="col-span-full text-center py-12"
             >
-              <Link href={`/course/${course.id}`}>
-                <div className="group cursor-pointer bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 h-full flex flex-col">
-                  {/* Thumbnail */}
-                  <div className={`h-48 ${getThumbnailGradient(course.thumbnail)} relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-card" />
-                    <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold border ${getLevelBadgeColor(course.level)}`}>
-                      {course.level}
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {course.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-4 flex-1">
-                      {course.description.slice(0, 120)}...
-                    </p>
-
-                    {/* Progress Bar */}
-                    <div className="mb-4">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs text-muted-foreground">Progress</span>
-                        <span className="text-xs font-semibold text-primary">{course.progress}%</span>
-                      </div>
-                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${course.progress}%` }}
-                          transition={{ duration: 0.8, ease: 'easeOut' }}
-                          className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-border">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-secondary" />
-                        <span className="text-xs text-muted-foreground">{course.instructor}</span>
-                      </div>
-                      <button className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold rounded-lg transition-all">
-                        Start learning
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <div className="text-6xl mb-4">📚</div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No enrolled courses yet</h3>
+              <p className="text-muted-foreground mb-4">
+                Enroll in a course to have it appear in your dashboard.
+              </p>
+              <button
+                onClick={() => router.push('/courses')}
+                className="px-6 py-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-all"
+              >
+                Browse courses
+              </button>
             </motion.div>
+          ) : filteredCourses.length > 0 ? (
+            filteredCourses.map((course, index) => (
+              <motion.div
+                key={course.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Link href={`/course/${course.id}`}>
+                  <div className="group cursor-pointer bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 h-full flex flex-col">
+                    {/* Thumbnail */}
+                    <div className={`h-48 ${getThumbnailGradient(course.thumbnail)} relative overflow-hidden`}>
+                      <div className="absolute inset-0 bg-linear-to-b from-transparent to-card" />
+                      <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold border ${getLevelBadgeColor(course.level)}`}>
+                        {course.level}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 flex-1 flex flex-col">
+                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                        {course.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm mb-4 flex-1">
+                        {course.description.slice(0, 120)}...
+                      </p>
+
+                      {/* Progress Bar */}
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs text-muted-foreground">Progress</span>
+                          <span className="text-xs font-semibold text-primary">{course.progress}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${course.progress}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            className="h-full bg-linear-to-r from-primary to-primary/80 rounded-full"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between pt-4 border-t border-border">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-secondary" />
+                          <span className="text-xs text-muted-foreground">{course.instructor}</span>
+                        </div>
+                        <button className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold rounded-lg transition-all">
+                          Start learning
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
             ))
           ) : (
             <motion.div

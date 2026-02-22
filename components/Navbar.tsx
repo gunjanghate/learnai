@@ -28,7 +28,7 @@ export function Navbar({ onSearch }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
         <div className="flex items-center justify-between gap-6">
           {/* Logo */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AI</span>
             </div>
@@ -52,7 +52,7 @@ export function Navbar({ onSearch }: NavbarProps) {
           {/* Right section */}
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-10 h-10 bg-linear-to-br from-primary to-primary/70 rounded-full flex items-center justify-center text-white font-bold text-sm">
               JD
             </div>
           </div>

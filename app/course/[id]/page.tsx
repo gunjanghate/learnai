@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { courses } from '@/lib/mockData';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
+import { useUser } from '@/components/user-provider';
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -13,6 +14,33 @@ export default function CourseDetailPage() {
   const course = courses.find((c) => c.id === courseId);
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null);
   const [courseLessons, setCourseLessons] = useState(course?.lessons || []);
+
+  const { user, isHydrated, isEnrolled } = useUser();
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
+    if (!isEnrolled(courseId)) {
+      router.replace('/courses');
+    }
+  }, [user, isHydrated, isEnrolled, courseId, router]);
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Loading course...</p>
+      </div>
+    );
+  }
+
+  if (!user || !isEnrolled(courseId)) {
+    return null;
+  }
 
   if (!course) {
     return (
@@ -38,7 +66,7 @@ export default function CourseDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <div className="bg-gradient-to-b from-card to-background border-b border-border py-12 md:py-16">
+      <div className="bg-linear-to-b from-card to-background border-b border-border py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-6">
           <motion.button
             initial={{ opacity: 0, x: -20 }}
@@ -56,7 +84,7 @@ export default function CourseDetailPage() {
             className="flex gap-8"
           >
             {/* Hero Image */}
-            <div className="hidden md:flex w-64 h-48 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex-shrink-0" />
+            <div className="hidden md:flex w-64 h-48 bg-linear-to-br from-purple-500 to-blue-500 rounded-xl shrink-0" />
 
             {/* Content */}
             <div className="flex-1">
@@ -104,7 +132,7 @@ export default function CourseDetailPage() {
                   'Real-world applications'
                 ].map((item, index) => (
                   <div key={index} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0 mt-1">
                       <span className="text-primary-foreground text-sm">✓</span>
                     </div>
                     <span className="text-foreground/80">{item}</span>
@@ -205,7 +233,7 @@ export default function CourseDetailPage() {
                     initial={{ width: 0 }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.8 }}
-                    className="h-full bg-gradient-to-r from-primary to-primary/80"
+                    className="h-full bg-linear-to-r from-primary to-primary/80"
                   />
                 </div>
               </div>
@@ -236,7 +264,7 @@ export default function CourseDetailPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 rounded-xl p-6 text-center"
+                className="bg-linear-to-br from-primary/20 to-primary/5 border border-primary/30 rounded-xl p-6 text-center"
               >
                 <p className="text-3xl mb-2">🎉</p>
                 <p className="text-primary font-semibold">Course Complete!</p>

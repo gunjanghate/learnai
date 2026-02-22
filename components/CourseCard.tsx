@@ -26,7 +26,7 @@ export function CourseCard({ course, delay = 0 }: CourseCardProps) {
             <h3 className="font-semibold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-2">
               {course.title}
             </h3>
-            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0 ml-2" />
           </div>
 
           {/* Description */}
