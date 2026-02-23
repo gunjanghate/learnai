@@ -6,6 +6,7 @@ import { courses } from '@/lib/mockData';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import { useUser } from '@/components/user-provider';
+import { DashboardNavbar } from '@/components/DashboardNavbar';
 
 export default function CourseDetailPage() {
   const router = useRouter();
@@ -65,42 +66,65 @@ export default function CourseDetailPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <DashboardNavbar />
+
       {/* Hero Section */}
-      <div className="bg-linear-to-b from-card to-background border-b border-border py-12 md:py-16">
+      <div className="bg-linear-to-b from-card to-background border-b border-border py-10 md:py-14">
         <div className="max-w-6xl mx-auto px-6">
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={() => router.back()}
-            className="text-primary hover:text-primary/80 font-medium mb-6 inline-flex items-center gap-2"
-          >
-            ← Courses
-          </motion.button>
+          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              onClick={() => router.back()}
+              className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-2 w-max"
+            >
+              ← Back to courses
+            </motion.button>
+
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">
+                LearnAI course workspace
+              </span>
+              <span className="hidden sm:inline">
+                Track your progress, lessons, and achievements in one place.
+              </span>
+            </div>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex gap-8"
+            className="flex flex-col md:flex-row gap-8"
           >
             {/* Hero Image */}
-            <div className="hidden md:flex w-64 h-48 bg-linear-to-br from-purple-500 to-blue-500 rounded-xl shrink-0" />
+            <div className="hidden md:flex w-64 h-48 rounded-xl shrink-0 overflow-hidden relative">
+              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center" />
+              <div className="absolute inset-0 bg-linear-to-br from-primary/70 via-primary/40 to-transparent" />
+            </div>
 
             {/* Content */}
             <div className="flex-1">
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">{course.title}</h1>
-              <p className="text-muted-foreground text-lg mb-6">{course.description}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-primary mb-2">Course overview</p>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+                {course.title}
+              </h1>
+              <p className="text-muted-foreground text-base md:text-lg mb-6 max-w-2xl">{course.description}</p>
 
-              <div className="flex items-center gap-8">
+              <div className="flex flex-wrap items-center gap-6">
                 <div>
-                  <p className="text-muted-foreground text-sm">Duration</p>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wide">Duration</p>
                   <p className="text-foreground font-semibold">{course.duration}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground text-sm">Lessons</p>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wide">Lessons</p>
                   <p className="text-foreground font-semibold">{course.lessonCount}</p>
                 </div>
-                <button className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-all">
+                <div>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wide">Instructor</p>
+                  <p className="text-foreground font-semibold">{course.instructor}</p>
+                </div>
+                <button className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg transition-all shadow-md shadow-primary/20">
                   Start learning now
                 </button>
               </div>

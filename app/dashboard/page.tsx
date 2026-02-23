@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Categories */}
-        <div className="flex gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide">
+        {/* <div className="flex gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide">
           {categories.map((category) => (
             <button
               key={category}
@@ -109,7 +109,7 @@ export default function DashboardPage() {
               {category}
             </button>
           ))}
-        </div>
+        </div> */}
 
         {/* Courses Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

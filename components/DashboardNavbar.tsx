@@ -45,12 +45,12 @@ export function DashboardNavbar() {
             >
               Courses
             </Link>
-            <Link
+            {/* <Link
               href="#settings"
               className="text-muted-foreground font-medium hover:text-foreground transition-colors"
             >
               Settings
-            </Link>
+            </Link> */}
           </div>
         </div>
 
