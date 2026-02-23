@@ -10,22 +10,54 @@ import {
   TextInput,
 } from 'react-native';
 
-// Minimal data types
+// Minimal data - AI focused, matching web dashboard
 const initialCourses = [
   {
     id: '1',
-    title: 'Blockchain Basics',
+    title: 'Intro to AI & ML',
     description:
-      "Master blockchain's core concepts: transactions, wallets, consensus, scalability, and more.",
+      'Get a hands-on, beginner-friendly overview of artificial intelligence and machine learning fundamentals.',
     level: 'Beginner',
-    instructor: 'Ciara Nightingale',
-    duration: '6hrs',
-    lessonCount: 58,
-    progress: 12,
+    instructor: 'Dr. Ananya Mehta',
+    duration: '5hrs',
+    lessonCount: 36,
+    progress: 0,
     lessons: [
-      { id: '1-1', title: 'Introduction to Blockchain', completed: true },
-      { id: '1-2', title: 'Understanding Transactions', completed: false },
-      { id: '1-3', title: 'Wallet Fundamentals', completed: false },
+      { id: '1-1', title: 'What is AI?', completed: false },
+      { id: '1-2', title: 'ML vs. Deep Learning', completed: false },
+      { id: '1-3', title: 'Datasets & Features', completed: false },
+    ],
+  },
+  {
+    id: '2',
+    title: 'Deep Learning with PyTorch',
+    description:
+      'Build, train and evaluate deep neural networks using PyTorch tensors, autograd and modern training tricks.',
+    level: 'Intermediate',
+    instructor: 'Marcus Liu',
+    duration: '8hrs',
+    lessonCount: 44,
+    progress: 0,
+    lessons: [
+      { id: '2-1', title: 'Tensors & Autograd', completed: false },
+      { id: '2-2', title: 'Your First Network', completed: false },
+      { id: '2-3', title: 'Training Loops & Schedulers', completed: false },
+    ],
+  },
+  {
+    id: '3',
+    title: 'Applied Computer Vision',
+    description:
+      'Ship real-world computer vision projects with CNNs, transfer learning and production-ready pipelines.',
+    level: 'Intermediate',
+    instructor: 'Sara Kovács',
+    duration: '9hrs',
+    lessonCount: 40,
+    progress: 0,
+    lessons: [
+      { id: '3-1', title: 'Intro to CV', completed: false },
+      { id: '3-2', title: 'Preparing Image Data', completed: false },
+      { id: '3-3', title: 'Deploying CV Models', completed: false },
     ],
   },
 ];
@@ -142,6 +174,9 @@ function DashboardScreen() {
   const [courses] = useState(initialCourses);
   const [theme, setTheme] = useState('light');
   const isDark = theme === 'dark';
+  const primaryCourse = courses[0];
+
+  const weeklyDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   return (
     <SafeAreaView style={[styles.container, isDark && styles.containerDark]}>
@@ -154,7 +189,63 @@ function DashboardScreen() {
         />
       </View>
       <View style={styles.contentContainer}>
-        <Text style={[styles.sectionTitle, isDark && styles.sectionTitleDark]}>Your courses</Text>
+        {/* Greeting hero */}
+        <View style={[styles.heroCard, isDark && styles.heroCardDark]}>
+          <Text style={[styles.heroLabel, isDark && styles.heroLabelDark]}>LEARNAI DASHBOARD</Text>
+          <Text style={[styles.heroTitle, isDark && styles.heroTitleDark]}>Welcome back, Demo Learner</Text>
+          <Text style={[styles.heroSubtitle, isDark && styles.heroSubtitleDark]}>
+            Pick up where you left off, track your progress across AI courses, and discover new topics to explore.
+          </Text>
+          {primaryCourse && (
+            <View style={styles.heroActionsRow}>
+              <View style={[styles.heroResumePill, isDark && styles.heroResumePillDark]}>
+                <Text style={styles.heroResumeLabel}>Resume</Text>
+                <Text style={styles.heroResumeTitle}>{primaryCourse.title}</Text>
+                <Text style={styles.heroResumeMeta}>0% complete</Text>
+              </View>
+            </View>
+          )}
+        </View>
+
+        {/* Weekly streak + thought of the day */}
+        <View style={styles.weekAndThoughtRow}>
+          <View style={[styles.weekCard, isDark && styles.weekCardDark]}>
+            <View style={styles.weekHeaderRow}>
+              <View>
+                <Text style={[styles.weekLabel, isDark && styles.weekLabelDark]}>Weekly streak</Text>
+                <Text style={[styles.weekSubtitle, isDark && styles.weekSubtitleDark]}>
+                  Stay consistent this week
+                </Text>
+              </View>
+              <View style={styles.weekStreakMeta}>
+                <Text style={[styles.weekStreakLabel, isDark && styles.weekStreakLabelDark]}>Current streak</Text>
+                <Text style={styles.weekStreakValue}>0 days</Text>
+              </View>
+            </View>
+            <View style={styles.weekDaysRow}>
+              {weeklyDays.map((day) => (
+                <View key={day} style={styles.weekDayItem}>
+                  <View style={[styles.weekDayCircle, isDark && styles.weekDayCircleDark]}>
+                    <Text style={[styles.weekDayText, isDark && styles.weekDayTextDark]}>{day}</Text>
+                  </View>
+                  <Text style={[styles.weekDayLabel, isDark && styles.weekDayLabelDark]}>{day}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          <View style={[styles.thoughtCard, isDark && styles.thoughtCardDark]}>
+            <Text style={[styles.thoughtLabel, isDark && styles.thoughtLabelDark]}>THOUGHT OF THE DAY</Text>
+            <Text style={[styles.thoughtQuote, isDark && styles.thoughtQuoteDark]}>
+              "Consistency beats intensity. 30 focused minutes today moves you further than 3 hours someday."
+            </Text>
+            <Text style={[styles.thoughtHint, isDark && styles.thoughtHintDark]}>
+              Keep your streak by completing at least one AI lesson today.
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.sectionTitle, isDark && styles.sectionTitleDark]}>Your AI courses</Text>
         <FlatList
           data={courses}
           keyExtractor={(item) => item.id}
@@ -332,6 +423,197 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 16,
+  },
+  heroCard: {
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: '#ecfdf5',
+    marginBottom: 16,
+  },
+  heroCardDark: {
+    backgroundColor: '#022c22',
+  },
+  heroLabel: {
+    fontSize: 11,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: '#10b981',
+    marginBottom: 4,
+  },
+  heroLabelDark: {
+    color: '#6ee7b7',
+  },
+  heroTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#022c22',
+    marginBottom: 4,
+  },
+  heroTitleDark: {
+    color: '#ecfdf5',
+  },
+  heroSubtitle: {
+    fontSize: 13,
+    color: '#047857',
+    marginBottom: 12,
+  },
+  heroSubtitleDark: {
+    color: '#a7f3d0',
+  },
+  heroActionsRow: {
+    flexDirection: 'row',
+    marginTop: 4,
+  },
+  heroResumePill: {
+    flex: 1,
+    borderRadius: 999,
+    backgroundColor: '#10b981',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  heroResumePillDark: {
+    backgroundColor: '#22c55e',
+  },
+  heroResumeLabel: {
+    fontSize: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    color: '#bbf7d0',
+  },
+  heroResumeTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#ecfdf5',
+  },
+  heroResumeMeta: {
+    fontSize: 11,
+    color: '#d1fae5',
+  },
+  weekAndThoughtRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
+  weekCard: {
+    flex: 1,
+    borderRadius: 16,
+    backgroundColor: '#ffffff',
+    padding: 12,
+    marginRight: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#e5e7eb',
+  },
+  weekCardDark: {
+    backgroundColor: '#020617',
+    borderColor: '#111827',
+  },
+  weekHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  weekLabel: {
+    fontSize: 11,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: '#6b7280',
+  },
+  weekLabelDark: {
+    color: '#9ca3af',
+  },
+  weekSubtitle: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  weekSubtitleDark: {
+    color: '#9ca3af',
+  },
+  weekStreakMeta: {
+    alignItems: 'flex-end',
+  },
+  weekStreakLabel: {
+    fontSize: 10,
+    color: '#6b7280',
+  },
+  weekStreakLabelDark: {
+    color: '#9ca3af',
+  },
+  weekStreakValue: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#10b981',
+  },
+  weekDaysRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 6,
+  },
+  weekDayItem: {
+    alignItems: 'center',
+  },
+  weekDayCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#e5e7eb',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f9fafb',
+  },
+  weekDayCircleDark: {
+    borderColor: '#1f2937',
+    backgroundColor: '#020617',
+  },
+  weekDayText: {
+    fontSize: 11,
+    color: '#6b7280',
+  },
+  weekDayTextDark: {
+    color: '#e5e7eb',
+  },
+  weekDayLabel: {
+    fontSize: 10,
+    color: '#9ca3af',
+    marginTop: 2,
+  },
+  weekDayLabelDark: {
+    color: '#6b7280',
+  },
+  thoughtCard: {
+    flex: 1,
+    borderRadius: 16,
+    backgroundColor: '#ecfdf5',
+    padding: 12,
+    marginLeft: 8,
+  },
+  thoughtCardDark: {
+    backgroundColor: '#022c22',
+  },
+  thoughtLabel: {
+    fontSize: 11,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: '#10b981',
+    marginBottom: 4,
+  },
+  thoughtLabelDark: {
+    color: '#6ee7b7',
+  },
+  thoughtQuote: {
+    fontSize: 13,
+    color: '#022c22',
+    marginBottom: 6,
+  },
+  thoughtQuoteDark: {
+    color: '#ecfdf5',
+  },
+  thoughtHint: {
+    fontSize: 11,
+    color: '#047857',
+  },
+  thoughtHintDark: {
+    color: '#a7f3d0',
   },
   sectionTitle: {
     fontSize: 18,
