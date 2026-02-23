@@ -7,13 +7,38 @@ interface CourseLayoutProps {
 }
 
 interface CourseMetadataParams {
-    params: {
+    params: Promise<{
         id: string | string[];
-    };
+    }>;
 }
 
 export async function generateMetadata({ params }: CourseMetadataParams): Promise<Metadata> {
-    const id = Array.isArray(params.id) ? params.id[0] : params.id;
+    const { id: rawId } = await params;
+    const id = Array.isArray(rawId) ? rawId[0] : rawId;
+    console.log('Generating metadata for course ID:', id);
+
+    if (!id) {
+        return {
+            title: 'Course not found • LearnAI',
+            description: 'The requested course could not be found on LearnAI.',
+            alternates: {
+                canonical: '/courses',
+            },
+            openGraph: {
+                title: 'Course not found • LearnAI',
+                description: 'The requested course could not be found on LearnAI.',
+                type: 'website',
+                url: '/courses',
+                siteName: 'LearnAI',
+            },
+            twitter: {
+                card: 'summary_large_image',
+                title: 'Course not found • LearnAI',
+                description: 'The requested course could not be found on LearnAI.',
+            },
+        };
+    }
+
     const course = courses.find((c) => c.id === id);
 
     if (!course) {

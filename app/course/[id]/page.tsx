@@ -10,8 +10,9 @@ import { DashboardNavbar } from '@/components/DashboardNavbar';
 
 export default function CourseDetailPage() {
   const router = useRouter();
-  const params = useParams();
-  const courseId = params?.id as string;
+  const params = useParams<{ id: string | string[] }>();
+  const rawId = params?.id;
+  const courseId = Array.isArray(rawId) ? rawId[0] : rawId;
   const course = courses.find((c) => c.id === courseId);
   const [expandedLesson, setExpandedLesson] = useState<string | null>(null);
   const [courseLessons, setCourseLessons] = useState(course?.lessons || []);
@@ -54,7 +55,9 @@ export default function CourseDetailPage() {
   }
 
   const completedLessons = courseLessons.filter((l) => l.completed).length;
-  const progress = Math.round((completedLessons / courseLessons.length) * 100);
+  const progress = courseLessons.length
+    ? Math.round((completedLessons / courseLessons.length) * 100)
+    : 0;
 
   const handleToggleLesson = (lessonId: string) => {
     setCourseLessons((prev) =>
