@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     appTitle: {
-        fontSize: 18,
+        fontSize: 30,
         fontWeight: '900',
         color: '#111827',
     },
